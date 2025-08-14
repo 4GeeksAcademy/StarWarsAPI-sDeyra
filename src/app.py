@@ -90,20 +90,35 @@ def post_planetas_fav(planet_id):
 
 @app.route('/favorites/personajes/<int:personaje_id>', methods=['POST'])
 def post_personaje_fav(personaje_id):
-    personaje_id=Personaje.query.filter_by(id=personaje_id).first()
-    if personaje_id is None:
+    personaje=Personaje.query.filter_by(id=personaje_id).first()
+    if personaje is None:
         return jsonify({"msg": "No existe el personaje"}), 404
     
     new_fav=Favorites(
         user_id=4, 
-        post_personaje_fav=personaje_id,
+        personajeid=personaje_id,
     )
     db.session.add(new_fav)
     db.session.commit()
     return jsonify ({"msg": "Nuevo favorito creado"}), 201
 
+@app.route('/favorites/user/<int:id>', methods=['GET'])
+def get_user_fav(id): 
+    usuarios=Favorites.query.filter_by(user_id=id).all() #busca los favoritos segun el id
+    if usuarios ==[]: #si no hay
+        return jsonify({"msg": "Este usuario no tiene favoritos"}), 404 #retorna el mensaje
+      
+    response_body = [usuario.serialize() for usuario in usuarios] #por cada favorito que enciuentra va a serializar la info
+    return jsonify(response_body), 200
 
-
+@app.route('/favorites/<int:id>', methods=['DELETE'])
+def delet_fav(id): 
+    favorito=Favorites.query.filter_by(id=id).first() 
+    if favorito is None: #si no hay
+        return jsonify({"msg": "Este existe el favorito"}), 404 #retorna el mensaje
+    db.session.delete(favorito)
+    db.session.commit()
+    return jsonify({"msg": "Ha sido borrado exitosamente"}), 204
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
