@@ -100,7 +100,9 @@ def post_personaje_fav(personaje_id):
     )
     db.session.add(new_fav)
     db.session.commit()
-    return jsonify ({"msg": "Nuevo favorito creado"}), 201
+    return jsonify ({"msg": "Nuevo favorito creado"}), 201
+
+
 
 
 # this only runs if `$ python src/app.py` is executed
